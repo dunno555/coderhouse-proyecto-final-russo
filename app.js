@@ -29,8 +29,8 @@ const html = `
                     </label>
                 </div>
             </form>
-            <div class="text-end">
-            <button type="button" class="btn btn-primary">Submit</button>
+            <div class="mt-3 text-center">
+                <i class="bi bi-arrow-right-circle"></i>
             </div>
         </div>
     </section>
