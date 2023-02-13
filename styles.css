@@ -1,4 +1,7 @@
-html, body { height: 100%; }
+html, body {
+    width: 100vw;
+    height: 100vh;
+}
 
 body {
     display: flex;
@@ -12,7 +15,6 @@ body {
 }
 
 #loader {
-    display: none;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -40,6 +42,21 @@ body {
 #navigation {
     display: none;
     margin-top: 20px;
+}
+
+.hide {
+    display: none;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.row.d-flex {
+    padding-top: 15px;
 }
 
 .fa-chevron-left {
