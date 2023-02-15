@@ -40,7 +40,7 @@ body {
 }
 
 #navigation {
-    display: none;
+    align-self: flex-end;
     margin-top: 20px;
 }
 
@@ -53,6 +53,10 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+.form-control {
+    width: 50%;
 }
 
 .row.d-flex {
@@ -71,6 +75,10 @@ label, input {
     margin-right: 10px;
 }
 
+label {
+    font-size: large;
+}
+
 .form-check-label {
     padding: 0 10px;
 }
@@ -82,7 +90,16 @@ input[id^="option"]:checked + label {
     border-radius: 10px;
 }
 
-.bi-arrow-right-circle {
-    font-size: 3rem;
-    color: #8B9A46;
+input[id^="option"]:checked + label > .bi-check-circle { 
+    color: var(--bs-success-border-subtle);
+}
+
+.bi-check-circle {
+    transform: scale(1.05);
+    color: var(--bs-success);
+}
+
+.bi-x-circle {
+    transform: scale(1.1);
+    color: var(--bs-danger-border-subtle);
 }

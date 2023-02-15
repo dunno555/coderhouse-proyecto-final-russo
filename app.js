@@ -7,6 +7,7 @@
 
 // check this video: https://www.youtube.com/watch?v=riDzcEQbX6k
 
+import { questions } from "./questions.js";
 class Question {
     constructor(question, answer1, answer2, answer3, answer4) {
         this.question = question,
@@ -30,16 +31,29 @@ class Question {
         ];
     }
 
-    randomSort() {
+    answersRandomSort() {
         this.answers.sort(() => 0.5 - Math.random());
+    }
+}
+
+class Player {
+    constructor(name, score = 0) {
+        this.name = name;
+        this.score = score;
     }
 }
 
 const form = document.querySelector('form');
 const initialState = document.querySelector('#initial-state');
 const sectionContainer = document.querySelector('#section-container');
+const formElements = document.querySelectorAll('.form-check');
+const submitBtn = document.querySelector('#submitBtn');
+const nextBtn = document.querySelector('#nextBtn');
+const submitMessage = document.querySelector('#submitMessage');
+const inputBtns = document.querySelectorAll('input');
+const endBtn = document.querySelector('#endBtn');
 
-let randomizedQuestions, currentIndex;
+let randomizedQuestions = [], currentIndex;
 
 function loading() {
     let loader = document.querySelector('#loader');
@@ -52,21 +66,25 @@ function loading() {
 }
 
 function showQuestion(question) {
-    document.querySelector('h4').innerText = question.question;
-    console.log(question.answers)
+    document.querySelector('#question-container > h3').innerText = `Question ${currentIndex + 1}`;
+    document.querySelector('#question-container > h4').innerText = question.question;
     
     question.answers.forEach((answer, index) => {
-        document.querySelector(`label[for="option-${index + 1}"]`).innerText = answer.text
+        let answerLabel = document.querySelector(`label[for="option-${index + 1}"]`); 
+        answerLabel.innerText = answer.text;
+        if (answer.correct) {
+            answerLabel.dataset.correct = answer.correct;
+        }
     });
 }
 
 function startGame(e) {
     e.preventDefault();
     let playerNameValue = document.querySelector('#player').value;
-    let prelimQuestions = [];
-    localStorage.setItem('playerName', playerNameValue);
+    let player = new Player(playerNameValue);
+    localStorage.setItem('player', JSON.stringify(player));
     document.querySelector('#player').value = '';
-    document.querySelector('.navbar-text').textContent = `Player: ${localStorage.getItem('playerName')}`;
+    document.querySelector('.navbar-text').innerHTML = `<b>Player:</b> ${JSON.parse(localStorage.getItem('player')).name} | <b>Score:</b> <span id="score">${JSON.parse(localStorage.getItem('player')).score}</span>`;
     questions.forEach(el => {
         const question = new Question(
             el.question,
@@ -75,15 +93,65 @@ function startGame(e) {
             el.incorrectAnswers[1],
             el.incorrectAnswers[2]
         )
-        question.randomSort();
-        prelimQuestions.push(question);
+        question.answersRandomSort();
+        randomizedQuestions.push(question);
     });
-    prelimQuestions.sort(() => 0.5 - Math.random());
+    randomizedQuestions.sort(() => 0.5 - Math.random());
+    currentIndex = 0;
 
     loading();
-    showQuestion(prelimQuestions[0]);
+    setQuestion();
 };
 
+function setQuestion() {
+    nextBtn.classList.add('hide');
+    submitMessage.classList.add('hide');
+    inputBtns.forEach((el) => {
+        el.checked = false;
+    });
+    showQuestion(randomizedQuestions[currentIndex]);
+}
+
+function submitAnswer() {
+    const correctIcon = `  
+    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-check-circle" viewBox="0 -0.5 16 19">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+        <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+    </svg>`
+    const incorrectIcon = `  
+    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-circle" viewBox="0 -0.5 16 19">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+    </svg>`
+    const correctAnswerLabel = document.querySelector('label[data-correct=true]');
+    const selectedAnswerLabel = document.querySelector('input:checked + label');
+    correctAnswerLabel.innerHTML += correctIcon;
+
+    if (!selectedAnswerLabel.dataset.correct) {
+        selectedAnswerLabel.innerHTML += incorrectIcon;
+        submitMessage.innerText = 'Nice try! Better luck next time!';
+        submitMessage.className = 'text-info';
+    };
+
+    if (selectedAnswerLabel.dataset.correct) {
+        let questionScore = 100;
+        let player = JSON.parse(localStorage.getItem('player'));
+        player.score += questionScore;
+        localStorage.setItem('player', JSON.stringify(player));
+        document.querySelector('#score').innerText = JSON.parse(localStorage.getItem('player')).score;
+        submitMessage.innerText = 'Congrats! +100 points!';
+        submitMessage.className = 'text-success';
+    };
+
+    if (randomizedQuestions.length > currentIndex + 1) {
+        submitBtn.classList.add('hide');
+        nextBtn.classList.remove('hide');
+    } else {
+        submitBtn.classList.add('hide');
+        endBtn.classList.remove('hide');
+        nextBtn.classList.add('hide');
+    };
+}
 // function changeLabelStyle() {
 //     let radioBtns = Array.from(document.querySelectorAll('input[id^="option"]'));
 //     radioBtns.forEach(btn => {
@@ -101,67 +169,23 @@ function startGame(e) {
 // };
 
 form.addEventListener('submit', startGame);
+// The Submit button is shown if any of the options are clicked
+formElements.forEach((el) => {
+    el.addEventListener('click', () => {
+        submitBtn.classList.remove('hide');
+    })
+});
+submitBtn.addEventListener('click', submitAnswer);
+nextBtn.addEventListener('click', () => {
+    currentIndex++;
+    setQuestion();
+});
+endBtn.addEventListener('click', () => {
+    sectionContainer.innerHTML = `<h3> Final Score: ${JSON.parse(localStorage.getItem('player')).score}</h3>`
+    localStorage.removeItem('player');
+    // Add a restart button
+})
 // form.addEventListener('change', changeLabelStyle);
 
-const questions = [
-    {
-        "category": "Film & TV",
-        "id": "639ae873929b90846f2fc8df",
-        "correctAnswer": "Red",
-        "incorrectAnswers":
-            [
-                "Blue",
-                "Green",
-                "Purple"
-            ],
-        "question": "In Star Wars, what color is Darth Vader's lightsaber?",
-    },
-    {
-        "category": "Film & TV",
-        "id": "622a1c367cc59eab6f9501fe",
-        "correctAnswer": "Quentin Tarantino",
-        "incorrectAnswers":
-            [
-                "Steven Spielberg",
-                "Woody Allen",
-                "Martin Scorsese"
-            ],
-        "question": "Which director directed Pulp Fiction?",
-    },
-    {
-        "category": "Film & TV",
-        "id": "625741333d2f5c16bfb88345",
-        "correctAnswer": "A human soldier is sent from 2029 to 1984 to stop an almost indestructible cyborg killing machine.",
-        "incorrectAnswers":
-            [
-                "A Marine observes the effects of war on his fellow recruits from their boot camp training to fighting in a war.",
-                "The lives of mob hitmen, a boxer, a gangster and his wife, and a pair of bandits intertwine in four tales.",
-                "Historical events unfold from the perspective of an Alabama man with an IQ of 75."
-            ],
-        "question": "What is the plot of the movie The Terminator?",
-    },
-    {
-        "category": "Film & TV",
-        "id": "622a1c347cc59eab6f94fadd",
-        "correctAnswer": "Tom Hanks",
-        "incorrectAnswers":
-            [
-                "Morgan Freeman",
-                "Nigel Hawthorne",
-                "Paul Newman"
-            ],
-        "question": "Who won the 1994 Academy Award for Best Leading Actor for playing the role of Forrest Gump in Forrest Gump?",
-    },
-    {
-        "category": "Film & TV",
-        "id": "622a1c347cc59eab6f94fc10",
-        "correctAnswer": "\"Elementary, my dear Watson.\"",
-        "incorrectAnswers":
-            [
-                "\"Keep your friends close, but your enemies closer.\"",
-                "\"My mother thanks you. My father thanks you. My sister thanks you. And I thank you.\"",
-                "\"My precious.\""
-            ],
-        "question": "Which of these quotes is from the film 'The Adventures of Sherlock Holmes'?",
-    }
-];
+// check why, in some questions, when an incorrect answer is selected, points are still given, but the correct
+// answer is marked with the icon. also, in some other cases, two answers are labelled as correct
