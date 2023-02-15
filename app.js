@@ -1,13 +1,5 @@
-// Quiz App:
-
-// sections:
-// question logic -> this will handle retrieving the question from the API, organizing them in Question objects, and verifying if a question is correct or incorrect.
-
-// UI -> this will handle the UI portion of the app, that is, the display of the loader, the player name, the questions, and the navigation (when the user clicks on the forward button, this will take care of changing the questions on the screen). it will also handle the behavior of back and forward buttons (if we are in question 1, then the back button will be disabled. if we are in question 5, then the forward button will be disabled, and the Submit button will become visible). this means that this section will need access to the Question object, so that it can keep track of the question id
-
-// check this video: https://www.youtube.com/watch?v=riDzcEQbX6k
-
 import { questions } from "./questions.js";
+import { correctIcon, incorrectIcon } from "./icons.js";
 class Question {
     constructor(question, answer1, answer2, answer3, answer4) {
         this.question = question,
@@ -117,20 +109,11 @@ function setQuestion() {
 }
 
 function submitAnswer() {
-    const correctIcon = `  
-    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-check-circle" viewBox="0 -0.5 16 19">
-        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-        <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
-    </svg>`
-    const incorrectIcon = `  
-    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-circle" viewBox="0 -0.5 16 19">
-        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-    </svg>`
     const correctAnswerLabel = document.querySelector('label[data-correct="true"]');
     const selectedAnswerLabel = document.querySelector('input:checked + label');
 
     if (selectedAnswerLabel.dataset.correct) {
+        // if the selected answer is correct
         let questionScore = 100;
         let player = JSON.parse(localStorage.getItem('player'));
         player.score += questionScore;
@@ -140,19 +123,22 @@ function submitAnswer() {
         submitMessage.innerText = 'Congrats! +100 points!';
         submitMessage.className = 'text-success';
     } else {
+        // if the selected answer is incorrect
         selectedAnswerLabel.innerHTML += incorrectIcon;
+        correctAnswerLabel.innerHTML += correctIcon;
         submitMessage.innerText = 'Nice try! Better luck next time!';
         submitMessage.className = 'text-info';
-        correctAnswerLabel.innerHTML += correctIcon;
     };
 
     if (randomizedQuestions.length > currentIndex + 1) {
+        // if there are still more questions to answer
         submitBtn.classList.add('hide');
         nextBtn.classList.remove('hide');
     } else {
+        // if the question that was just answered is the last question
         submitBtn.classList.add('hide');
-        endBtn.classList.remove('hide');
         nextBtn.classList.add('hide');
+        endBtn.classList.remove('hide');
     };
 }
 // function changeLabelStyle() {
@@ -198,3 +184,6 @@ endBtn.addEventListener('click', () => {
 // - change final score view, so that it is a bit more elegant for the user
 // - set the Submit, Next and End Game button on a fixed position, regardless of the width of the form
 // - add toastr notifications, so that the messages are not displayed on screen
+// - integrate the app with The Trivia API - https://the-trivia-api.com/ so that questions are randomly
+//   generated every time the app is initialized
+// - general refactoring, so that the app is more logically organized

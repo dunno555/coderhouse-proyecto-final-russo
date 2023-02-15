@@ -63,14 +63,6 @@ body {
     padding-top: 15px;
 }
 
-.fa-chevron-left {
-    margin-right: 10px;
-}
-
-.fa-chevron-right {
-    margin-left: 10px;
-}
-
 label, input {
     margin-right: 10px;
 }
@@ -91,6 +83,7 @@ input[id^="option"]:checked + label {
 }
 
 input[id^="option"]:checked + label > .bi-check-circle { 
+    /* the icon is darker if the correct option is selected, so that it is clearly visible */
     color: var(--bs-success-border-subtle);
 }
 
