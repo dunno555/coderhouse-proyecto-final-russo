@@ -68,9 +68,13 @@ function loading() {
 function showQuestion(question) {
     document.querySelector('#question-container > h3').innerText = `Question ${currentIndex + 1}`;
     document.querySelector('#question-container > h4').innerText = question.question;
-    
+    // clearing data attribute so that incorrect answers are not marked as correct
+    document.querySelectorAll('[data-correct]').forEach((el) => {
+        el.removeAttribute('data-correct');
+    })
+
     question.answers.forEach((answer, index) => {
-        let answerLabel = document.querySelector(`label[for="option-${index + 1}"]`); 
+        let answerLabel = document.getElementById(`option-${index + 1}-label`);
         answerLabel.innerText = answer.text;
         if (answer.correct) {
             answerLabel.dataset.correct = answer.correct;
@@ -123,15 +127,8 @@ function submitAnswer() {
         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
         <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
     </svg>`
-    const correctAnswerLabel = document.querySelector('label[data-correct=true]');
+    const correctAnswerLabel = document.querySelector('label[data-correct="true"]');
     const selectedAnswerLabel = document.querySelector('input:checked + label');
-    correctAnswerLabel.innerHTML += correctIcon;
-
-    if (!selectedAnswerLabel.dataset.correct) {
-        selectedAnswerLabel.innerHTML += incorrectIcon;
-        submitMessage.innerText = 'Nice try! Better luck next time!';
-        submitMessage.className = 'text-info';
-    };
 
     if (selectedAnswerLabel.dataset.correct) {
         let questionScore = 100;
@@ -139,8 +136,14 @@ function submitAnswer() {
         player.score += questionScore;
         localStorage.setItem('player', JSON.stringify(player));
         document.querySelector('#score').innerText = JSON.parse(localStorage.getItem('player')).score;
+        correctAnswerLabel.innerHTML += correctIcon;
         submitMessage.innerText = 'Congrats! +100 points!';
         submitMessage.className = 'text-success';
+    } else {
+        selectedAnswerLabel.innerHTML += incorrectIcon;
+        submitMessage.innerText = 'Nice try! Better luck next time!';
+        submitMessage.className = 'text-info';
+        correctAnswerLabel.innerHTML += correctIcon;
     };
 
     if (randomizedQuestions.length > currentIndex + 1) {
@@ -175,11 +178,14 @@ formElements.forEach((el) => {
         submitBtn.classList.remove('hide');
     })
 });
+// we submit an answer when the Submit button is clicked
 submitBtn.addEventListener('click', submitAnswer);
+// we set the new question when the Next button is clicked
 nextBtn.addEventListener('click', () => {
     currentIndex++;
     setQuestion();
 });
+// we end the game and display final score when the End Game button is clicked
 endBtn.addEventListener('click', () => {
     sectionContainer.innerHTML = `<h3> Final Score: ${JSON.parse(localStorage.getItem('player')).score}</h3>`
     localStorage.removeItem('player');
@@ -187,5 +193,8 @@ endBtn.addEventListener('click', () => {
 })
 // form.addEventListener('change', changeLabelStyle);
 
-// check why, in some questions, when an incorrect answer is selected, points are still given, but the correct
-// answer is marked with the icon. also, in some other cases, two answers are labelled as correct
+// Things to add:
+// - a restart button
+// - change final score view, so that it is a bit more elegant for the user
+// - set the Submit, Next and End Game button on a fixed position, regardless of the width of the form
+// - add toastr notifications, so that the messages are not displayed on screen
