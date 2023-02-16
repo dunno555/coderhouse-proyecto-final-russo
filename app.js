@@ -1,33 +1,5 @@
-import { questions } from "./questions.js";
+import { Question, questions } from "./question.js";
 import { correctIcon, incorrectIcon } from "./icons.js";
-class Question {
-    constructor(question, answer1, answer2, answer3, answer4) {
-        this.question = question,
-        this.answers = [
-            {
-                text: answer1,
-                correct: true
-            },
-            {
-                text: answer2,
-                correct: false
-            },
-            {
-                text: answer3,
-                correct: false
-            },
-            {
-                text: answer4,
-                correct: false
-            }
-        ];
-    }
-
-    answersRandomSort() {
-        this.answers.sort(() => 0.5 - Math.random());
-    }
-}
-
 class Player {
     constructor(name, score = 0) {
         this.name = name;
@@ -39,11 +11,15 @@ const form = document.querySelector('form');
 const initialState = document.querySelector('#initial-state');
 const sectionContainer = document.querySelector('#section-container');
 const formElements = document.querySelectorAll('.form-check');
+const navBarText = document.querySelector('.navbar-text');
 const submitBtn = document.querySelector('#submitBtn');
 const nextBtn = document.querySelector('#nextBtn');
 const submitMessage = document.querySelector('#submitMessage');
 const inputBtns = document.querySelectorAll('input');
 const endBtn = document.querySelector('#endBtn');
+const playAgainBtn = document.querySelector('#playAgainBtn');
+const endgame = document.querySelector('#end-game');
+const finalScore = document.querySelector('#final-score');
 
 let randomizedQuestions = [], currentIndex;
 
@@ -55,7 +31,16 @@ function loading() {
         loader.classList.add('hide');
         sectionContainer.classList.replace('hide', 'container');
     }, 3000);
-}
+};
+
+function setQuestion() {
+    nextBtn.classList.add('hide');
+    submitMessage.classList.add('hide');
+    inputBtns.forEach((el) => {
+        el.checked = false;
+    });
+    showQuestion(randomizedQuestions[currentIndex]);
+};
 
 function showQuestion(question) {
     document.querySelector('#question-container > h3').innerText = `Question ${currentIndex + 1}`;
@@ -72,7 +57,7 @@ function showQuestion(question) {
             answerLabel.dataset.correct = answer.correct;
         }
     });
-}
+};
 
 function startGame(e) {
     e.preventDefault();
@@ -80,7 +65,7 @@ function startGame(e) {
     let player = new Player(playerNameValue);
     localStorage.setItem('player', JSON.stringify(player));
     document.querySelector('#player').value = '';
-    document.querySelector('.navbar-text').innerHTML = `<b>Player:</b> ${JSON.parse(localStorage.getItem('player')).name} | <b>Score:</b> <span id="score">${JSON.parse(localStorage.getItem('player')).score}</span>`;
+    navBarText.innerHTML = `<b>Player:</b> ${JSON.parse(localStorage.getItem('player')).name} | <b>Score:</b> <span id="score">${JSON.parse(localStorage.getItem('player')).score}</span>`;
     questions.forEach(el => {
         const question = new Question(
             el.question,
@@ -98,15 +83,6 @@ function startGame(e) {
     loading();
     setQuestion();
 };
-
-function setQuestion() {
-    nextBtn.classList.add('hide');
-    submitMessage.classList.add('hide');
-    inputBtns.forEach((el) => {
-        el.checked = false;
-    });
-    showQuestion(randomizedQuestions[currentIndex]);
-}
 
 function submitAnswer() {
     const correctAnswerLabel = document.querySelector('label[data-correct="true"]');
@@ -173,14 +149,24 @@ nextBtn.addEventListener('click', () => {
 });
 // we end the game and display final score when the End Game button is clicked
 endBtn.addEventListener('click', () => {
-    sectionContainer.innerHTML = `<h3> Final Score: ${JSON.parse(localStorage.getItem('player')).score}</h3>`
+    sectionContainer.classList.replace('container', 'hide');
+    endgame.classList.remove('hide');
+    finalScore.innerText = `Final Score: ${JSON.parse(localStorage.getItem('player')).score}`;
     localStorage.removeItem('player');
+    playAgainBtn.classList.remove('hide');
     // Add a restart button
-})
+});
+playAgainBtn.addEventListener('click', () => {
+    endBtn.classList.add('hide');
+    endgame.classList.add('hide');
+    initialState.classList.remove('hide');
+    navBarText.innerHTML = '';
+    randomizedQuestions = [];
+});
 // form.addEventListener('change', changeLabelStyle);
 
 // Things to add:
-// - a restart button
+// - a restart button --> DONE
 // - change final score view, so that it is a bit more elegant for the user
 // - set the Submit, Next and End Game button on a fixed position, regardless of the width of the form
 // - add toastr notifications, so that the messages are not displayed on screen

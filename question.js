@@ -1,4 +1,32 @@
-export const questions = [
+class Question {
+    constructor(question, answer1, answer2, answer3, answer4) {
+        this.question = question,
+        this.answers = [
+            {
+                text: answer1,
+                correct: true
+            },
+            {
+                text: answer2,
+                correct: false
+            },
+            {
+                text: answer3,
+                correct: false
+            },
+            {
+                text: answer4,
+                correct: false
+            }
+        ];
+    }
+
+    answersRandomSort() {
+        this.answers.sort(() => 0.5 - Math.random());
+    }
+};
+
+const questions = [
     {
         "category": "Film & TV",
         "id": "639ae873929b90846f2fc8df",
@@ -60,3 +88,5 @@ export const questions = [
         "question": "Which of these quotes is from the film 'The Adventures of Sherlock Holmes'?",
     }
 ];
+
+export { Question, questions };
