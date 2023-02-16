@@ -14,7 +14,6 @@ const formElements = document.querySelectorAll('.form-check');
 const navBarText = document.querySelector('.navbar-text');
 const submitBtn = document.querySelector('#submitBtn');
 const nextBtn = document.querySelector('#nextBtn');
-const submitMessage = document.querySelector('#submitMessage');
 const inputBtns = document.querySelectorAll('input');
 const endBtn = document.querySelector('#endBtn');
 const playAgainBtn = document.querySelector('#playAgainBtn');
@@ -35,7 +34,6 @@ function loading() {
 
 function setQuestion() {
     nextBtn.classList.add('hide');
-    submitMessage.classList.add('hide');
     inputBtns.forEach((el) => {
         el.checked = false;
     });
@@ -94,14 +92,28 @@ function submitAnswer() {
         localStorage.setItem('player', JSON.stringify(player));
         document.querySelector('#score').innerText = JSON.parse(localStorage.getItem('player')).score;
         correctAnswerLabel.innerHTML += correctIcon;
-        submitMessage.innerText = 'Congrats! +100 points!';
-        submitMessage.className = 'text-success';
+        Toastify({
+            text: "Congrats! +100 points! 😃",
+            duration: 3000,
+            stopOnFocus: true,
+            className: "rounded-2",
+            style: {
+                background: "radial-gradient(circle, rgba(13,193,0,1) 13%, rgba(36,142,5,1) 93%)",
+            }
+        }).showToast();
     } else {
         // if the selected answer is incorrect
         selectedAnswerLabel.innerHTML += incorrectIcon;
         correctAnswerLabel.innerHTML += correctIcon;
-        submitMessage.innerText = 'Nice try! Better luck next time!';
-        submitMessage.className = 'text-info';
+        Toastify({
+            text: "Nice try! Better luck next time! 😓",
+            duration: 3000,
+            stopOnFocus: true,
+            className: "rounded-2",
+            style: {
+                background: "radial-gradient(circle, rgba(157,36,0,1) 55%, rgba(126,3,76,1) 93%)",
+            }
+        }).showToast();
     };
 
     if (randomizedQuestions.length > currentIndex + 1) {
@@ -167,7 +179,7 @@ playAgainBtn.addEventListener('click', () => {
 // - a restart button --> DONE
 // - change final score view, so that it is a bit more elegant for the user
 // - set the Submit, Next and End Game button on a fixed position, regardless of the width of the form --> DONE (up to a point)
-// - add toastr notifications, so that the messages are not displayed on screen
+// - add toastr notifications, so that the messages are not displayed on screen --> DONE
 // - integrate the app with The Trivia API - https://the-trivia-api.com/ so that questions are randomly
 //   generated every time the app is initialized
 // - general refactoring, so that the app is more logically organized
