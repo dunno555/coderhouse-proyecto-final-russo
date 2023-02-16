@@ -65,14 +65,12 @@ function startGame(e) {
     let player = new Player(playerNameValue);
     localStorage.setItem('player', JSON.stringify(player));
     document.querySelector('#player').value = '';
-    navBarText.innerHTML = `<b>Player:</b> ${JSON.parse(localStorage.getItem('player')).name} | <b>Score:</b> <span id="score">${JSON.parse(localStorage.getItem('player')).score}</span>`;
+    navBarText.innerHTML = `<b>Player:</b> ${JSON.parse(localStorage.getItem('player')).name}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<b>Score:</b> <span id="score">${JSON.parse(localStorage.getItem('player')).score}</span>`;
     questions.forEach(el => {
         const question = new Question(
             el.question,
             el.correctAnswer,
-            el.incorrectAnswers[0],
-            el.incorrectAnswers[1],
-            el.incorrectAnswers[2]
+            ...el.incorrectAnswers
         )
         question.answersRandomSort();
         randomizedQuestions.push(question);
