@@ -40,6 +40,9 @@ body {
 }
 
 #navigation {
+    position: absolute;
+    bottom: 150px;
+    right: 350px;
     align-self: flex-end;
     margin-top: 20px;
 }

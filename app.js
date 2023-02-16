@@ -168,7 +168,7 @@ playAgainBtn.addEventListener('click', () => {
 // Things to add:
 // - a restart button --> DONE
 // - change final score view, so that it is a bit more elegant for the user
-// - set the Submit, Next and End Game button on a fixed position, regardless of the width of the form
+// - set the Submit, Next and End Game button on a fixed position, regardless of the width of the form --> DONE (up to a point)
 // - add toastr notifications, so that the messages are not displayed on screen
 // - integrate the app with The Trivia API - https://the-trivia-api.com/ so that questions are randomly
 //   generated every time the app is initialized
