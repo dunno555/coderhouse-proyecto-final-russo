@@ -51,9 +51,10 @@ function showQuestion(question) {
     question.answers.forEach((answer, index) => {
         let answerLabel = document.getElementById(`option-${index + 1}-label`);
         answerLabel.innerText = answer.text;
-        if (answer.correct) {
-            answerLabel.dataset.correct = answer.correct;
-        }
+        // if (answer.correct) {
+        //     answerLabel.dataset.correct = answer.correct;
+        // }
+        answer.correct && (answerLabel.dataset.correct = answer.correct);
     });
 };
 
@@ -86,9 +87,8 @@ function submitAnswer() {
 
     if (selectedAnswerLabel.dataset.correct) {
         // if the selected answer is correct
-        let questionScore = 100;
         let player = JSON.parse(localStorage.getItem('player'));
-        player.score += questionScore;
+        player.score += 100;
         localStorage.setItem('player', JSON.stringify(player));
         document.querySelector('#score').innerText = JSON.parse(localStorage.getItem('player')).score;
         correctAnswerLabel.innerHTML += correctIcon;
@@ -181,5 +181,6 @@ playAgainBtn.addEventListener('click', () => {
 // - set the Submit, Next and End Game button on a fixed position, regardless of the width of the form --> DONE (up to a point)
 // - add toastr notifications, so that the messages are not displayed on screen --> DONE
 // - integrate the app with The Trivia API - https://the-trivia-api.com/ so that questions are randomly
-//   generated every time the app is initialized
+//   generated every time the app is initialized --> DONE BBUUUUUUUUUUUUT
+// - we need to find how to regenerate the 'questions' variable every time we initialize the app
 // - general refactoring, so that the app is more logically organized
