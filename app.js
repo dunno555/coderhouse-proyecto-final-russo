@@ -1,5 +1,6 @@
-import { Question, questions } from "./question.js";
+import { Question } from "./question.js";
 import { correctIcon, incorrectIcon } from "./icons.js";
+import { QuestionsAPI } from "./triviaAPI.js";
 class Player {
     constructor(name, score = 0) {
         this.name = name;
@@ -21,6 +22,10 @@ const endgame = document.querySelector('#end-game');
 const finalScore = document.querySelector('#final-score');
 
 let randomizedQuestions = [], currentIndex;
+
+// Initializing the QuestionsAPI class, so that we can call on new questions every time the app is initialized
+let questions = new QuestionsAPI;
+questions.fetchQuestions();
 
 function loading() {
     let loader = document.querySelector('#loader');
@@ -65,7 +70,7 @@ function startGame(e) {
     localStorage.setItem('player', JSON.stringify(player));
     document.querySelector('#player').value = '';
     navBarText.innerHTML = `<b>Player:</b> ${JSON.parse(localStorage.getItem('player')).name}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<b>Score:</b> <span id="score">${JSON.parse(localStorage.getItem('player')).score}</span>`;
-    questions.forEach(el => {
+    questions.questions.forEach(el => {
         const question = new Question(
             el.question,
             el.correctAnswer,
@@ -164,7 +169,6 @@ endBtn.addEventListener('click', () => {
     finalScore.innerText = `Final Score: ${JSON.parse(localStorage.getItem('player')).score}`;
     localStorage.removeItem('player');
     playAgainBtn.classList.remove('hide');
-    // Add a restart button
 });
 playAgainBtn.addEventListener('click', () => {
     endBtn.classList.add('hide');
@@ -172,6 +176,7 @@ playAgainBtn.addEventListener('click', () => {
     initialState.classList.remove('hide');
     navBarText.innerHTML = '';
     randomizedQuestions = [];
+    questions.fetchQuestions();
 });
 // form.addEventListener('change', changeLabelStyle);
 
@@ -182,5 +187,5 @@ playAgainBtn.addEventListener('click', () => {
 // - add toastr notifications, so that the messages are not displayed on screen --> DONE
 // - integrate the app with The Trivia API - https://the-trivia-api.com/ so that questions are randomly
 //   generated every time the app is initialized --> DONE BBUUUUUUUUUUUUT
-// - we need to find how to regenerate the 'questions' variable every time we initialize the app
+// - we need to find how to regenerate the 'questions' variable every time we initialize the app --> DONE
 // - general refactoring, so that the app is more logically organized
