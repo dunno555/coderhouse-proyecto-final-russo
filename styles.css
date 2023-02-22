@@ -99,3 +99,20 @@ input[id^="option"]:checked + label > .bi-check-circle {
     transform: scale(1.1);
     color: var(--bs-danger-border-subtle);
 }
+
+#end-game {
+    padding: 10px;
+    border: #4a5a04 solid;
+    border-radius: 5px;
+}
+
+.table {
+    width: 500px;
+    align-self: center;
+}
+
+#currentPlayer {
+    --bs-table-bg: #47203a;
+    background-color: var(--bs-table-bg);
+    font-weight: bold;
+}

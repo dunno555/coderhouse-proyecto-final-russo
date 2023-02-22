@@ -126,27 +126,56 @@ function submitAnswer() {
         submitBtn.classList.add('hide');
         nextBtn.classList.remove('hide');
     } else {
-        // if the question that was just answered is the last question
+        // if the question that was just answered was the last question
         submitBtn.classList.add('hide');
         nextBtn.classList.add('hide');
         endBtn.classList.remove('hide');
     };
-}
-// function changeLabelStyle() {
-//     let radioBtns = Array.from(document.querySelectorAll('input[id^="option"]'));
-//     radioBtns.forEach(btn => {
-//         let label = btn.nextElementSibling;
-//         if (btn.checked == true) {
-//             label.classList.remove('unchecked-label');
-//             label.classList.add('checked-label');
-//             btn.parentElement.style.backgroundColor = '#8B9A46';
-//         } else {
-//             label.classList.remove('checked-label');
-//             label.classList.add('unchecked-label');
-//             btn.parentElement.style.backgroundColor = '';
-//         };
-//     });
-// };
+};
+
+function leaderboardBuilder() {
+    let leaderboardPlayers = JSON.parse(localStorage.getItem('leaderboard')) || [];
+    let currentPlayer = JSON.parse(localStorage.getItem('player'));
+    let currentPlayerIndex;
+
+    if (!localStorage.getItem('leaderboard')) {
+        let leaderBoardPlayersNames = ['Mickey Mouth', 'The Condor', 'Alison Cat', 'Radio Knife', 'Carbon Thing'];
+        let score = 100;
+
+        // We build the leaderboard based on the names provided above
+        for (let index = 0; index < leaderBoardPlayersNames.length; index++) {
+            let player = new Player(leaderBoardPlayersNames[index], score);
+            leaderboardPlayers.unshift(player);
+            score += 100;
+        };
+        localStorage.setItem('leaderboard', JSON.stringify(leaderboardPlayers));
+    };
+
+    // If the current player's score is within the scores set in the leaderboard, then they are added
+    for (let index = 0; index < leaderboardPlayers.length; index++) {
+        if (currentPlayer.score >= leaderboardPlayers[index].score) {
+            leaderboardPlayers[index] = currentPlayer;
+            currentPlayerIndex = index;
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboardPlayers));
+            break;
+        };
+    };
+
+    // We create the tr elements to be displayed on the leaderboard
+    leaderboardPlayers.forEach((player, index) => {
+        let playersElement = document.getElementById('players');
+        let playerRow = document.createElement('tr');
+        if (index == currentPlayerIndex) {
+            playerRow.id = 'currentPlayer';
+        };
+        playerRow.innerHTML = `
+            <td>${player.name}</td>
+            <td>${player.score}</td>
+        `;
+        playersElement.appendChild(playerRow);
+    })
+};
+
 
 form.addEventListener('submit', startGame);
 // The Submit button is shown if any of the options are clicked
@@ -167,8 +196,9 @@ endBtn.addEventListener('click', () => {
     sectionContainer.classList.replace('container', 'hide');
     endgame.classList.remove('hide');
     finalScore.innerText = `Final Score: ${JSON.parse(localStorage.getItem('player')).score}`;
-    localStorage.removeItem('player');
     playAgainBtn.classList.remove('hide');
+    leaderboardBuilder();
+    localStorage.removeItem('player');
 });
 playAgainBtn.addEventListener('click', () => {
     endBtn.classList.add('hide');
@@ -176,13 +206,13 @@ playAgainBtn.addEventListener('click', () => {
     initialState.classList.remove('hide');
     navBarText.innerHTML = '';
     randomizedQuestions = [];
+    document.getElementById('players').innerHTML = '';
     questions.fetchQuestions();
 });
-// form.addEventListener('change', changeLabelStyle);
 
 // Things to add:
 // - a restart button --> DONE
-// - change final score view, so that it is a bit more elegant for the user
+// - change final score view, so that it is a bit more elegant for the user --> DONE
 // - set the Submit, Next and End Game button on a fixed position, regardless of the width of the form --> DONE (up to a point)
 // - add toastr notifications, so that the messages are not displayed on screen --> DONE
 // - integrate the app with The Trivia API - https://the-trivia-api.com/ so that questions are randomly
