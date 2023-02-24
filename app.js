@@ -38,7 +38,7 @@ function loading() {
 };
 
 function setQuestion() {
-    nextBtn.classList.add('hide');
+    sectionContainer.classList.contains('slide-out-left') && sectionContainer.classList.remove('slide-out-left');
     inputBtns.forEach((el) => {
         el.checked = false;
     });
@@ -104,6 +104,9 @@ function submitAnswer() {
             className: "rounded-2",
             style: {
                 background: "radial-gradient(circle, rgba(13,193,0,1) 13%, rgba(36,142,5,1) 93%)",
+            },
+            offset: {
+                y: 40
             }
         }).showToast();
     } else {
@@ -117,6 +120,9 @@ function submitAnswer() {
             className: "rounded-2",
             style: {
                 background: "radial-gradient(circle, rgba(157,36,0,1) 55%, rgba(126,3,76,1) 93%)",
+            },
+            offset: {
+                y: 40
             }
         }).showToast();
     };
@@ -188,13 +194,18 @@ formElements.forEach((el) => {
 submitBtn.addEventListener('click', submitAnswer);
 // we set the new question when the Next button is clicked
 nextBtn.addEventListener('click', () => {
-    currentIndex++;
-    setQuestion();
+    sectionContainer.classList.add('slide-out-left');
+    nextBtn.classList.add('hide')
+    setTimeout(() => {
+        currentIndex++;
+        setQuestion();
+    }, 1000);
+    
 });
 // we end the game and display final score when the End Game button is clicked
 endBtn.addEventListener('click', () => {
     sectionContainer.classList.replace('container', 'hide');
-    endgame.classList.remove('hide');
+    endgame.classList.replace('hide', 'flicker-in-2');
     finalScore.innerText = `Final Score: ${JSON.parse(localStorage.getItem('player')).score}`;
     playAgainBtn.classList.remove('hide');
     leaderboardBuilder();
@@ -202,7 +213,7 @@ endBtn.addEventListener('click', () => {
 });
 playAgainBtn.addEventListener('click', () => {
     endBtn.classList.add('hide');
-    endgame.classList.add('hide');
+    endgame.classList.replace('flicker-in-2', 'hide');
     initialState.classList.remove('hide');
     navBarText.innerHTML = '';
     randomizedQuestions = [];
@@ -219,3 +230,4 @@ playAgainBtn.addEventListener('click', () => {
 //   generated every time the app is initialized --> DONE BBUUUUUUUUUUUUT
 // - we need to find how to regenerate the 'questions' variable every time we initialize the app --> DONE
 // - general refactoring, so that the app is more logically organized
+// - check how to change the color of the shining effect of the flicker (https://animista.net/play/entrances/flicker-in/flicker-in-2)
