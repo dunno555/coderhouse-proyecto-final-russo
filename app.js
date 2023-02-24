@@ -1,12 +1,8 @@
 import { Question } from "./question.js";
 import { correctIcon, incorrectIcon } from "./icons.js";
+import { Player } from "./player.js";
 import { QuestionsAPI } from "./triviaAPI.js";
-class Player {
-    constructor(name, score = 0) {
-        this.name = name;
-        this.score = score;
-    }
-}
+import { leaderboardBuilder } from "./leaderboard.js";
 
 const form = document.querySelector('form');
 const initialState = document.querySelector('#initial-state');
@@ -139,50 +135,6 @@ function submitAnswer() {
     };
 };
 
-function leaderboardBuilder() {
-    let leaderboardPlayers = JSON.parse(localStorage.getItem('leaderboard')) || [];
-    let currentPlayer = JSON.parse(localStorage.getItem('player'));
-    let currentPlayerIndex;
-
-    if (!localStorage.getItem('leaderboard')) {
-        let leaderBoardPlayersNames = ['Mickey Mouth', 'The Condor', 'Alison Cat', 'Radio Knife', 'Carbon Thing'];
-        let score = 100;
-
-        // We build the leaderboard based on the names provided above
-        for (let index = 0; index < leaderBoardPlayersNames.length; index++) {
-            let player = new Player(leaderBoardPlayersNames[index], score);
-            leaderboardPlayers.unshift(player);
-            score += 100;
-        };
-        localStorage.setItem('leaderboard', JSON.stringify(leaderboardPlayers));
-    };
-
-    // If the current player's score is within the scores set in the leaderboard, then they are added
-    for (let index = 0; index < leaderboardPlayers.length; index++) {
-        if (currentPlayer.score >= leaderboardPlayers[index].score) {
-            leaderboardPlayers[index] = currentPlayer;
-            currentPlayerIndex = index;
-            localStorage.setItem('leaderboard', JSON.stringify(leaderboardPlayers));
-            break;
-        };
-    };
-
-    // We create the tr elements to be displayed on the leaderboard
-    leaderboardPlayers.forEach((player, index) => {
-        let playersElement = document.getElementById('players');
-        let playerRow = document.createElement('tr');
-        if (index == currentPlayerIndex) {
-            playerRow.id = 'currentPlayer';
-        };
-        playerRow.innerHTML = `
-            <td>${player.name}</td>
-            <td>${player.score}</td>
-        `;
-        playersElement.appendChild(playerRow);
-    })
-};
-
-
 form.addEventListener('submit', startGame);
 // The Submit button is shown if any of the options are clicked
 formElements.forEach((el) => {
@@ -211,14 +163,18 @@ endBtn.addEventListener('click', () => {
     leaderboardBuilder();
     localStorage.removeItem('player');
 });
+// we restart the application when the Play again? button is clicked
 playAgainBtn.addEventListener('click', () => {
     endBtn.classList.add('hide');
-    endgame.classList.replace('flicker-in-2', 'hide');
-    initialState.classList.remove('hide');
-    navBarText.innerHTML = '';
-    randomizedQuestions = [];
-    document.getElementById('players').innerHTML = '';
-    questions.fetchQuestions();
+    endgame.classList.replace('flicker-in-2', 'flicker-out-2');
+    setTimeout(() => {
+        endgame.classList.replace('flicker-out-2', 'hide');
+        initialState.classList.remove('hide');
+        navBarText.innerHTML = '';
+        randomizedQuestions = [];
+        document.getElementById('players').innerHTML = '';
+        questions.fetchQuestions();
+    }, 1500);
 });
 
 // Things to add:
