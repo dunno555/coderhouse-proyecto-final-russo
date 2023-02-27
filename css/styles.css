@@ -91,3 +91,12 @@ input[id^="option"]:checked + label > .bi-check-circle {
     background-color: var(--bs-table-bg);
     font-weight: bold;
 }
+
+#currentPlayer:hover {
+    --bs-table-hover-bg: #53424C;
+    background-color: var(--bs-table-hover-bg);
+}
+
+tbody, td, tfoot, th, thead, tr {
+    border-style: none;
+}
