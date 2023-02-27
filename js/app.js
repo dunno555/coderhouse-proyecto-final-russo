@@ -105,9 +105,14 @@ function submitAnswer() {
     if (selectedAnswerLabel.dataset.correct) {
         // if the selected answer is correct
         let player = JSON.parse(localStorage.getItem('player'));
+        let playerScore = document.querySelector('#score');
         player.score += 100;
         localStorage.setItem('player', JSON.stringify(player));
-        document.querySelector('#score').innerText = JSON.parse(localStorage.getItem('player')).score;
+        playerScore.innerText = JSON.parse(localStorage.getItem('player')).score;
+        playerScore.classList.add('score-blink');
+        setTimeout(() => {
+            playerScore.classList.remove('score-blink');
+        }, 1000);
         correctAnswerLabel.innerHTML += correctIcon;
         Toastify({
             text: "Congrats! +100 points! 😃",

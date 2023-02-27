@@ -25,8 +25,6 @@
     100% { transform: rotate(360deg); }
 }
 
-/* end of loader styling */
-
 /* When next question is going to be displayed, the previouly answered question slides out to the left */
 .slide-out-left {
 	-webkit-animation: slide-out-left 1s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
@@ -56,6 +54,17 @@
                 transform: translateX(-1000px);
         opacity: 0;
     }
+}
+
+/* when the correct answer is submitted, the score blinks to alert the user that the score has been increased */
+
+.score-blink {
+    animation: blinker 1s linear infinite;
+    color: #8B9A46;
+}
+
+@keyframes blinker {
+    50% { opacity: 0; }
 }
 
 /* flicker effect when the leaderboard appears at the end of the game */
