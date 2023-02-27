@@ -1,9 +1,16 @@
+// Question is the class for the Question objects, which includes the question text and each of the answers
+// for the question
 import { Question } from "./question.js";
+// SVG for the correct and incorrect icons that are shown when an answer is submitted
 import { correctIcon, incorrectIcon } from "./icons.js";
+// Player is the class for the Player object, which includes name and score for the player
 import { Player } from "./player.js";
+// QuestionsAPI handles the retrieving of the questions and answers from the Trivia API
 import { QuestionsAPI } from "./triviaAPI.js";
+// this file handles the building of the leaderboard shown at the end of the game
 import { leaderboardBuilder } from "./leaderboard.js";
 
+// variables used in the application
 const form = document.querySelector('form');
 const initialState = document.querySelector('#initial-state');
 const sectionContainer = document.querySelector('#section-container');
@@ -17,12 +24,15 @@ const playAgainBtn = document.querySelector('#playAgainBtn');
 const endgame = document.querySelector('#end-game');
 const finalScore = document.querySelector('#final-score');
 
+// the first variable is the array that holds the questions when the game is being player, and the second variable
+// is used to manage the beginning and ending of the application
 let randomizedQuestions = [], currentIndex;
 
 // Initializing the QuestionsAPI class, so that we can call on new questions every time the app is initialized
 let questions = new QuestionsAPI;
 questions.fetchQuestions();
 
+// handles the showing of the loader at the beginning of the game
 function loading() {
     let loader = document.querySelector('#loader');
     initialState.classList.add('hide');
@@ -33,6 +43,7 @@ function loading() {
     }, 3000);
 };
 
+// handles the setting of the animation when moving to the next question and then calls another function to show it
 function setQuestion() {
     sectionContainer.classList.contains('slide-out-left') && sectionContainer.classList.remove('slide-out-left');
     inputBtns.forEach((el) => {
@@ -41,8 +52,10 @@ function setQuestion() {
     showQuestion(randomizedQuestions[currentIndex]);
 };
 
+// handles the displaying of the question on the screen, as well as setting the data-correct data attribute on the
+// correct answer
 function showQuestion(question) {
-    document.querySelector('#question-container > h3').innerText = `Question ${currentIndex + 1}`;
+    document.querySelector('#question-container > h3').innerText = `Question ${currentIndex + 1}/5`;
     document.querySelector('#question-container > h4').innerText = question.question;
     // clearing data attribute so that incorrect answers are not marked as correct
     document.querySelectorAll('[data-correct]').forEach((el) => {
@@ -52,13 +65,14 @@ function showQuestion(question) {
     question.answers.forEach((answer, index) => {
         let answerLabel = document.getElementById(`option-${index + 1}-label`);
         answerLabel.innerText = answer.text;
-        // if (answer.correct) {
-        //     answerLabel.dataset.correct = answer.correct;
-        // }
+        // if answer.correct is true, then we create a data-correct data attribute with the value "true"
         answer.correct && (answerLabel.dataset.correct = answer.correct);
     });
 };
 
+// handles the starting of the game, which entails the creation of the Player object, setting the player info on the
+// navbar, generating the Question objects based on the questions retrieved form the Trivia API, randomizing them,
+// and calling on the loading and setQuestion functions so that everything can be displayed on the screen
 function startGame(e) {
     e.preventDefault();
     let playerNameValue = document.querySelector('#player').value;
@@ -82,6 +96,8 @@ function startGame(e) {
     setQuestion();
 };
 
+// handles the submitting of the answer after an answer has been selected, what to show based on whether the answer
+// is correct or incorrect, and what to do if the game is in progress or about to end
 function submitAnswer() {
     const correctAnswerLabel = document.querySelector('label[data-correct="true"]');
     const selectedAnswerLabel = document.querySelector('input:checked + label');
@@ -135,6 +151,7 @@ function submitAnswer() {
     };
 };
 
+// Event Listeners
 form.addEventListener('submit', startGame);
 // The Submit button is shown if any of the options are clicked
 formElements.forEach((el) => {
@@ -178,12 +195,5 @@ playAgainBtn.addEventListener('click', () => {
 });
 
 // Things to add:
-// - a restart button --> DONE
-// - change final score view, so that it is a bit more elegant for the user --> DONE
 // - set the Submit, Next and End Game button on a fixed position, regardless of the width of the form --> DONE (up to a point)
-// - add toastr notifications, so that the messages are not displayed on screen --> DONE
-// - integrate the app with The Trivia API - https://the-trivia-api.com/ so that questions are randomly
-//   generated every time the app is initialized --> DONE BBUUUUUUUUUUUUT
-// - we need to find how to regenerate the 'questions' variable every time we initialize the app --> DONE
 // - general refactoring, so that the app is more logically organized
-// - check how to change the color of the shining effect of the flicker (https://animista.net/play/entrances/flicker-in/flicker-in-2)
