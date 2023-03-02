@@ -30,7 +30,6 @@ let randomizedQuestions = [], currentIndex;
 
 // Initializing the QuestionsAPI class, so that we can call on new questions every time the app is initialized
 let questions = new QuestionsAPI;
-questions.fetchQuestions();
 
 // handles the showing of the loader at the beginning of the game
 function loading() {
@@ -73,16 +72,18 @@ function showQuestion(question) {
 // handles the starting of the game, which entails the creation of the Player object, setting the player info on the
 // navbar, generating the Question objects based on the questions retrieved form the Trivia API, randomizing them,
 // and calling on the loading and setQuestion functions so that everything can be displayed on the screen
-function startGame(e) {
-    e.preventDefault();
+function startGame() {
     let playerNameValue = document.querySelector('#player').value;
     let player = new Player(playerNameValue);
+
+    loading();
     localStorage.setItem('player', JSON.stringify(player));
     document.querySelector('#player').value = '';
     navBarText.innerHTML = `<b>Player:</b> ${JSON.parse(localStorage.getItem('player')).name}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<b>Score:</b> <span id="score">${JSON.parse(localStorage.getItem('player')).score}</span>`;
     questions.questions.forEach(el => {
         const question = new Question(
             el.question,
+            el.difficulty,
             el.correctAnswer,
             ...el.incorrectAnswers
         )
@@ -92,7 +93,6 @@ function startGame(e) {
     randomizedQuestions.sort(() => 0.5 - Math.random());
     currentIndex = 0;
 
-    loading();
     setQuestion();
 };
 
@@ -157,7 +157,15 @@ function submitAnswer() {
 };
 
 // Event Listeners
-form.addEventListener('submit', startGame);
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const difficulty = e.submitter.textContent.toLowerCase();
+    questions.fetchQuestions(difficulty);
+    // This section of the code feels hacky, but will get the job done for now
+    setTimeout(() => {
+        startGame();
+    }, 500);
+});
 // The Submit button is shown if any of the options are clicked
 formElements.forEach((el) => {
     el.addEventListener('click', () => {
@@ -195,7 +203,7 @@ playAgainBtn.addEventListener('click', () => {
         navBarText.innerHTML = '';
         randomizedQuestions = [];
         document.getElementById('players').innerHTML = '';
-        questions.fetchQuestions();
+        questions.clearQuestions();
     }, 1500);
 });
 

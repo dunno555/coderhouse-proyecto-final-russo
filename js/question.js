@@ -1,6 +1,7 @@
 class Question {
-    constructor(question, answer1, answer2, answer3, answer4) {
+    constructor(question, difficulty, answer1, answer2, answer3, answer4) {
         this.question = question,
+        this.difficulty = difficulty;
         this.answers = [
             {
                 text: answer1,
