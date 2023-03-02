@@ -186,7 +186,7 @@ nextBtn.addEventListener('click', () => {
     }, 1000);
     
 });
-// we end the game and display final score when the End Game button is clicked
+// we end the game and display final score and leaderboard when the End Game button is clicked
 endBtn.addEventListener('click', () => {
     sectionContainer.classList.replace('container', 'hide');
     endgame.classList.replace('hide', 'flicker-in-2');
