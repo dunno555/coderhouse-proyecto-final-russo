@@ -23,10 +23,12 @@ const endBtn = document.querySelector('#endBtn');
 const playAgainBtn = document.querySelector('#playAgainBtn');
 const endgame = document.querySelector('#end-game');
 const finalScore = document.querySelector('#final-score');
+const difficultyText = document.querySelector('#difficulty');
 
 // the first variable is the array that holds the questions when the game is being player, and the second variable
-// is used to manage the beginning and ending of the application
-let randomizedQuestions = [], currentIndex;
+// is used to manage the beginning and ending of the application. The last variable is used to set the difficulty
+// of the game, as well as displaying the leaderboard based on the difficulty
+let randomizedQuestions = [], currentIndex, difficulty;
 
 // Initializing the QuestionsAPI class, so that we can call on new questions every time the app is initialized
 let questions = new QuestionsAPI;
@@ -159,12 +161,12 @@ function submitAnswer() {
 // Event Listeners
 form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const difficulty = e.submitter.textContent.toLowerCase();
+    difficulty = e.submitter.textContent.toLowerCase();
     questions.fetchQuestions(difficulty);
     // This section of the code feels hacky, but will get the job done for now
     setTimeout(() => {
         startGame();
-    }, 500);
+    }, 1000);
 });
 // The Submit button is shown if any of the options are clicked
 formElements.forEach((el) => {
@@ -189,8 +191,20 @@ endBtn.addEventListener('click', () => {
     sectionContainer.classList.replace('container', 'hide');
     endgame.classList.replace('hide', 'flicker-in-2');
     finalScore.innerText = `Final Score: ${JSON.parse(localStorage.getItem('player')).score}`;
+    difficultyText.innerText = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+    switch (difficulty) {
+        case 'easy':
+            difficultyText.className = 'text-success';
+            break;
+        case 'medium':
+            difficultyText.className = 'text-warning';
+            break;
+        case 'hard':
+            difficultyText.className = 'text-danger';
+            break;
+    };
     playAgainBtn.classList.remove('hide');
-    leaderboardBuilder();
+    leaderboardBuilder(difficulty);
     localStorage.removeItem('player');
 });
 // we restart the application when the Play again? button is clicked
@@ -203,9 +217,12 @@ playAgainBtn.addEventListener('click', () => {
         navBarText.innerHTML = '';
         randomizedQuestions = [];
         document.getElementById('players').innerHTML = '';
+        difficulty = '';
         questions.clearQuestions();
     }, 1500);
 });
+
+export { difficulty };
 
 // Things to add:
 // - set the Submit, Next and End Game button on a fixed position, regardless of the width of the form --> DONE (up to a point)

@@ -108,3 +108,9 @@ tbody, td, tfoot, th, thead, tr {
 #playAgainBtn:hover {
     font-weight: bold;
 }
+
+caption {
+    font-weight: bold;
+    font-size: large;
+    color: whitesmoke;
+}

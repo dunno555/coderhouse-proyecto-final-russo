@@ -1,11 +1,12 @@
 import { Player } from "./player.js";
+import { difficulty } from "./app.js";
 
-function leaderboardBuilder() {
-    let leaderboardPlayers = JSON.parse(localStorage.getItem('leaderboard')) || [];
+function leaderboardBuilder(difficulty) {
+    let leaderboardPlayers = JSON.parse(localStorage.getItem(`leaderboard-${difficulty}`)) || [];
     let currentPlayer = JSON.parse(localStorage.getItem('player'));
     let currentPlayerIndex;
 
-    if (!localStorage.getItem('leaderboard')) {
+    if (!localStorage.getItem(`leaderboard-${difficulty}`)) {
         originalLeaderboard(leaderboardPlayers);
     };
 
@@ -15,7 +16,8 @@ function leaderboardBuilder() {
             leaderboardPlayers.splice(index, 0, currentPlayer);
             leaderboardPlayers.pop();
             currentPlayerIndex = index;
-            localStorage.setItem('leaderboard', JSON.stringify(leaderboardPlayers));
+            localStorage.removeItem(`leaderboard-${difficulty}`);
+            localStorage.setItem(`leaderboard-${difficulty}`, JSON.stringify(leaderboardPlayers));
             // Once their score is added, we stop manipulating the leaderboard
             break;
         };
@@ -26,7 +28,7 @@ function leaderboardBuilder() {
         let playersElement = document.getElementById('players');
         let playerRow = document.createElement('tr');
         if (index == currentPlayerIndex) {
-            // We add an id so that we can style this row differently from the others
+            // We add an id so that we can style this row difficultyerently from the others
             playerRow.id = 'currentPlayer';
         };
         playerRow.innerHTML = `
@@ -47,7 +49,7 @@ function originalLeaderboard(players) {
             players.unshift(player);
             score += 100;
         };
-        localStorage.setItem('leaderboard', JSON.stringify(players));
+        localStorage.setItem(`leaderboard-${difficulty}`, JSON.stringify(players));
 };
 
 export { leaderboardBuilder };
