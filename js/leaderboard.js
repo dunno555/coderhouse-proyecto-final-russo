@@ -39,15 +39,15 @@ function leaderboardBuilder(difficulty) {
 
 function originalLeaderboard(players) {
     let leaderBoardPlayersNames = ['Mickey Mouth', 'The Condor', 'Alison Cat', 'Radio Knife', 'Carbon Thing'];
-        let score = 100;
+    let score = 100;
 
-        // We build the leaderboard based on the names provided above
-        for (let index = 0; index < leaderBoardPlayersNames.length; index++) {
-            let player = new Player(leaderBoardPlayersNames[index], score);
-            players.unshift(player);
-            score += 100;
-        };
-        localStorage.setItem(`leaderboard-${difficulty}`, JSON.stringify(players));
+    // We build the leaderboard based on the names provided above
+    for (let index = 0; index < leaderBoardPlayersNames.length; index++) {
+        let player = new Player(leaderBoardPlayersNames[index], score);
+        players.unshift(player);
+        score += 100;
+    };
+    localStorage.setItem(`leaderboard-${difficulty}`, JSON.stringify(players));
 };
 
 export { leaderboardBuilder };
