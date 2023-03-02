@@ -27,10 +27,8 @@ function leaderboardBuilder(difficulty) {
     leaderboardPlayers.forEach((player, index) => {
         let playersElement = document.getElementById('players');
         let playerRow = document.createElement('tr');
-        if (index == currentPlayerIndex) {
-            // We add an id so that we can style this row difficultyerently from the others
-            playerRow.id = 'currentPlayer';
-        };
+        // We add an id so that we can style this row differently from the others
+        index == currentPlayerIndex && (playerRow.id = 'currentPlayer');
         playerRow.innerHTML = `
             <td>${player.name}</td>
             <td>${player.score}</td>
