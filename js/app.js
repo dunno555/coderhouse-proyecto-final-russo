@@ -78,9 +78,9 @@ function startGame() {
     let playerNameValue = document.querySelector('#player').value;
     let player = new Player(playerNameValue);
 
-    localStorage.setItem('player', JSON.stringify(player));
     document.querySelector('#player').value = '';
-    navBarText.innerHTML = `<b>Player:</b> ${JSON.parse(localStorage.getItem('player')).name}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<b>Score:</b> <span id="score">${JSON.parse(localStorage.getItem('player')).score}</span>`;
+    navBarText.innerHTML = `<b>Player:</b> ${player.name}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<b>Score:</b> <span id="score">${player.score}</span>`;
+    localStorage.setItem('player', JSON.stringify(player));
     questions.questions.forEach(el => {
         const question = new Question(
             el.question,
@@ -109,8 +109,8 @@ function submitAnswer() {
         let player = JSON.parse(localStorage.getItem('player'));
         let playerScore = document.querySelector('#score');
         player.score += 100;
+        playerScore.innerText = player.score;
         localStorage.setItem('player', JSON.stringify(player));
-        playerScore.innerText = JSON.parse(localStorage.getItem('player')).score;
         playerScore.classList.add('score-blink');
         setTimeout(() => {
             playerScore.classList.remove('score-blink');
