@@ -6,9 +6,8 @@ function leaderboardBuilder(difficulty) {
     let currentPlayer = JSON.parse(localStorage.getItem('player'));
     let currentPlayerIndex;
 
-    if (!localStorage.getItem(`leaderboard-${difficulty}`)) {
-        originalLeaderboard(leaderboardPlayers);
-    };
+    // we generate a new leaderboard only if there isn't one already present in localStorage for the chosen difficulty
+    (!localStorage.getItem(`leaderboard-${difficulty}`)) && originalLeaderboard(leaderboardPlayers);
 
     // If the current player's score is within the scores set in the leaderboard, then their score is added
     for (let index = 0; index < leaderboardPlayers.length; index++) {

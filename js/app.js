@@ -25,7 +25,7 @@ const endgame = document.querySelector('#end-game');
 const finalScore = document.querySelector('#final-score');
 const difficultyText = document.querySelector('#difficulty');
 
-// the first variable is the array that holds the questions when the game is being player, and the second variable
+// the first variable is the array that holds the questions when the game is being played, and the second variable
 // is used to manage the beginning and ending of the application. The last variable is used to set the difficulty
 // of the game, as well as displaying the leaderboard based on the difficulty
 let randomizedQuestions = [], currentIndex, difficulty;
@@ -78,13 +78,13 @@ function startGame() {
     let playerNameValue = document.querySelector('#player').value;
     let player = new Player(playerNameValue);
 
-    loading();
     localStorage.setItem('player', JSON.stringify(player));
     document.querySelector('#player').value = '';
     navBarText.innerHTML = `<b>Player:</b> ${JSON.parse(localStorage.getItem('player')).name}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<b>Score:</b> <span id="score">${JSON.parse(localStorage.getItem('player')).score}</span>`;
     questions.questions.forEach(el => {
         const question = new Question(
             el.question,
+            // completely unnecessary piece of data for the app's normal operation but useful for debugging
             el.difficulty,
             el.correctAnswer,
             ...el.incorrectAnswers
@@ -159,14 +159,13 @@ function submitAnswer() {
 };
 
 // Event Listeners
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', async (e) => {
     e.preventDefault();
     difficulty = e.submitter.textContent.toLowerCase();
-    questions.fetchQuestions(difficulty);
-    // This section of the code feels hacky, but will get the job done for now
-    setTimeout(() => {
-        startGame();
-    }, 1000);
+    loading();
+    await questions.fetchQuestions(difficulty);
+    // I truly believe I have finally began to understand async code with this very simple fetching function
+    startGame();
 });
 // The Submit button is shown if any of the options are clicked
 formElements.forEach((el) => {

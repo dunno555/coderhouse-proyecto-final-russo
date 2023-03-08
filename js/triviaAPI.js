@@ -5,16 +5,15 @@ class QuestionsAPI {
         this.questions = questions;
     }
 
-    fetchQuestions(difficulty) {
+    async fetchQuestions(difficulty) {
         let modifiedURL = theTriviaAPIURL + difficulty
-        fetch(modifiedURL, {
+        const response = await fetch(modifiedURL, {
             headers: {
                 'Content-Type': 'application/json'
             },
-        }).then(response => response.json())
-        .then((data) => {
-            this.questions = data;
-        })
+        });
+        const data = await response.json();
+        this.questions = data;
     }
 
     clearQuestions() {
