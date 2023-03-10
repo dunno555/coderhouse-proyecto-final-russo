@@ -45,12 +45,12 @@ function loading() {
 };
 
 // handles the setting of the animation when moving to the next question and then calls another function to show it
-function setQuestion() {
+function setQuestion(qs, index) {
     sectionContainer.classList.contains('slide-out-left') && sectionContainer.classList.remove('slide-out-left');
     inputBtns.forEach((el) => {
         el.checked = false;
     });
-    showQuestion(randomizedQuestions[currentIndex]);
+    showQuestion(qs[index]);
 };
 
 // handles the displaying of the question on the screen, as well as setting the data-correct data attribute on the
@@ -76,10 +76,10 @@ function showQuestion(question) {
 // and calling on the loading and setQuestion functions so that everything can be displayed on the screen
 function startGame() {
     let playerNameValue = document.querySelector('#player').value;
-    let player = new Player(playerNameValue);
+    let player = new Player(playerNameValue, difficulty);
 
     document.querySelector('#player').value = '';
-    navBarText.innerHTML = `<b>Player:</b> ${player.name}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<b>Score:</b> <span id="score">${player.score}</span>`;
+    navBarText.innerHTML = playerTextBuilder(player.name, player.score);
     localStorage.setItem('player', JSON.stringify(player));
     questions.questions.forEach(el => {
         const question = new Question(
@@ -95,7 +95,12 @@ function startGame() {
     randomizedQuestions.sort(() => 0.5 - Math.random());
     currentIndex = 0;
 
-    setQuestion();
+    localStorage.setItem('current-state', JSON.stringify({
+        'randomizedQuestions': randomizedQuestions,
+        'currentIndex': currentIndex
+    }));
+
+    setQuestion(randomizedQuestions, currentIndex);
 };
 
 // handles the submitting of the answer after an answer has been selected, what to show based on whether the answer
@@ -164,7 +169,50 @@ function clearState() {
     document.getElementById('players').innerHTML = '';
     difficulty = '';
     questions.clearQuestions();
+    localStorage.removeItem('player');
+    localStorage.removeItem('current-state');
 };
+
+function checkState() {
+    const currentState = JSON.parse(localStorage.getItem('current-state'));
+    const player = JSON.parse(localStorage.getItem('player'));
+    if (currentState && currentState.currentIndex <= 4) {
+        initialState.classList.add('hide');
+        sectionContainer.classList.replace('hide', 'container');
+        navBarText.innerHTML = playerTextBuilder(player.name, player.score);
+
+        randomizedQuestions = currentState.randomizedQuestions;
+        currentIndex = currentState.currentIndex;
+        setQuestion(randomizedQuestions, currentIndex);
+    } else if (currentState && currentState.currentIndex > 4) {
+        difficulty = player.difficulty;
+        sectionContainer.classList.replace('container', 'hide');
+        endgame.classList.replace('hide', 'flicker-in-2');
+        finalScore.innerText = `Final Score: ${JSON.parse(localStorage.getItem('player')).score}`;
+        difficultyText.innerText = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+        switch (difficulty) {
+            case 'easy':
+                difficultyText.className = 'text-success';
+                break;
+            case 'medium':
+                difficultyText.className = 'text-warning';
+                break;
+            case 'hard':
+                difficultyText.className = 'text-danger';
+                break;
+        };
+        playAgainBtn.classList.remove('hide');
+        leaderboardBuilder(difficulty);
+    } else {
+        initialState.classList.remove('hide');
+    }
+};
+
+function playerTextBuilder(name, score) {
+    return `<b>Player:</b> ${name}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<b>Score:</b> <span id="score">${score}</span>`;
+};
+
+checkState();
 
 // Event Listeners
 form.addEventListener('submit', async (e) => {
@@ -189,12 +237,20 @@ nextBtn.addEventListener('click', () => {
     nextBtn.classList.add('hide')
     setTimeout(() => {
         currentIndex++;
-        setQuestion();
+        localStorage.setItem('current-state', JSON.stringify({
+            'randomizedQuestions': randomizedQuestions,
+            'currentIndex': currentIndex
+        }));
+        setQuestion(randomizedQuestions, currentIndex);
     }, 1000);
     
 });
 // we end the game and display final score and leaderboard when the End Game button is clicked
 endBtn.addEventListener('click', () => {
+    currentIndex++;
+        localStorage.setItem('current-state', JSON.stringify({
+            'currentIndex': currentIndex
+        }));
     sectionContainer.classList.replace('container', 'hide');
     endgame.classList.replace('hide', 'flicker-in-2');
     finalScore.innerText = `Final Score: ${JSON.parse(localStorage.getItem('player')).score}`;
@@ -212,7 +268,6 @@ endBtn.addEventListener('click', () => {
     };
     playAgainBtn.classList.remove('hide');
     leaderboardBuilder(difficulty);
-    localStorage.removeItem('player');
 });
 // we restart the application when the Play again? button is clicked
 playAgainBtn.addEventListener('click', () => {
@@ -233,4 +288,7 @@ export { difficulty };
 // - add a current-state ls object, that will contain the randomized questions and the current index, so that, if the
 //   refreshes the page, then the last question that was on screen will get displayed. we will remove all keys in 
 //   this object and add another one when we get to the leaderboard, so that, if the user refreshes the page on the
-//   leaderboard, then the leaderboard will get displayed again
+//   leaderboard, then the leaderboard will get displayed again --> DONE
+// - ADD AN INDEX SO THAT, IF THE PAGE IS REFRESHED ON THE LEADERBOARD, THEN IT RETURNS TO THE LEADERBOARD --> DONE
+// - ADD A UI HANDLER
+// - ADD A STORAGE HANDLER
