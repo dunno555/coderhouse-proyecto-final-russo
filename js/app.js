@@ -9,6 +9,8 @@ import { Player } from "./player.js";
 import { QuestionsAPI } from "./triviaAPI.js";
 // this file handles the building of the leaderboard shown at the end of the game
 import { leaderboardBuilder } from "./leaderboard.js";
+// this file handles the UI changes (showing and hiding sections, completing player info, building the leaderboard)
+import { UIHandler } from "./UIHandler.js";
 
 // variables used in the application
 const form = document.querySelector('form');
@@ -32,15 +34,17 @@ let randomizedQuestions = [], currentIndex, difficulty;
 
 // Initializing the QuestionsAPI class, so that we can call on new questions every time the app is initialized
 let questions = new QuestionsAPI;
+// Initializing the UIHandler class, so that we can call it every time we change the UI
+let uiHandler = new UIHandler;
 
 // handles the showing of the loader at the beginning of the game
 function loading() {
     let loader = document.querySelector('#loader');
-    initialState.classList.add('hide');
-    loader.classList.remove('hide');
+    uiHandler.hideElement(initialState);
+    uiHandler.showElement(loader);
     setTimeout(() => {
-        loader.classList.add('hide');
-        sectionContainer.classList.replace('hide', 'container');
+        uiHandler.hideElement(loader);
+        uiHandler.showElement(sectionContainer, 'container');
     }, 3000);
 };
 
@@ -76,10 +80,10 @@ function showQuestion(question) {
 // and calling on the loading and setQuestion functions so that everything can be displayed on the screen
 function startGame() {
     let playerNameValue = document.querySelector('#player').value;
-    let player = new Player(playerNameValue, difficulty);
+    let player = new Player(playerNameValue, difficulty, 0, true);
 
     document.querySelector('#player').value = '';
-    navBarText.innerHTML = playerTextBuilder(player.name, player.score);
+    navBarText.innerHTML = uiHandler.playerTextBuilder(player.name, player.score);
     localStorage.setItem('player', JSON.stringify(player));
     questions.questions.forEach(el => {
         const question = new Question(
@@ -153,22 +157,28 @@ function submitAnswer() {
 
     if (randomizedQuestions.length > currentIndex + 1) {
         // if there are still more questions to answer
-        submitBtn.classList.add('hide');
-        nextBtn.classList.remove('hide');
+        uiHandler.hideElement(submitBtn);
+        uiHandler.showElement(nextBtn);
     } else {
         // if the question that was just answered was the last question
-        submitBtn.classList.add('hide');
-        nextBtn.classList.add('hide');
-        endBtn.classList.remove('hide');
+        uiHandler.hideElement(submitBtn);
+        uiHandler.hideElement(nextBtn);
+        uiHandler.showElement(endBtn);
     };
 };
 
 function clearState() {
+    let currentLeaderboard = JSON.parse(localStorage.getItem(`leaderboard-${difficulty}`));
+    let currentIndex = currentLeaderboard.findIndex(el => el.currentPlayer == true);
+    currentLeaderboard[currentIndex].currentPlayer = false;
+    localStorage.setItem(`leaderboard-${difficulty}`, JSON.stringify(currentLeaderboard));
+
     navBarText.innerHTML = '';
     randomizedQuestions = [];
     document.getElementById('players').innerHTML = '';
     difficulty = '';
     questions.clearQuestions();
+
     localStorage.removeItem('player');
     localStorage.removeItem('current-state');
 };
@@ -177,39 +187,27 @@ function checkState() {
     const currentState = JSON.parse(localStorage.getItem('current-state'));
     const player = JSON.parse(localStorage.getItem('player'));
     if (currentState && currentState.currentIndex <= 4) {
-        initialState.classList.add('hide');
-        sectionContainer.classList.replace('hide', 'container');
-        navBarText.innerHTML = playerTextBuilder(player.name, player.score);
+        uiHandler.hideElement(initialState);
+        uiHandler.showElement(sectionContainer, 'container');
+        navBarText.innerHTML = uiHandler.playerTextBuilder(player.name, player.score);
 
         randomizedQuestions = currentState.randomizedQuestions;
         currentIndex = currentState.currentIndex;
+        difficulty = player.difficulty;
         setQuestion(randomizedQuestions, currentIndex);
     } else if (currentState && currentState.currentIndex > 4) {
         difficulty = player.difficulty;
-        sectionContainer.classList.replace('container', 'hide');
-        endgame.classList.replace('hide', 'flicker-in-2');
+        uiHandler.hideElement(sectionContainer, 'container');
+        uiHandler.showElement(endgame, 'flicker-in-2');
+        navBarText.innerHTML = uiHandler.playerTextBuilder(player.name, player.score);
         finalScore.innerText = `Final Score: ${JSON.parse(localStorage.getItem('player')).score}`;
         difficultyText.innerText = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
-        switch (difficulty) {
-            case 'easy':
-                difficultyText.className = 'text-success';
-                break;
-            case 'medium':
-                difficultyText.className = 'text-warning';
-                break;
-            case 'hard':
-                difficultyText.className = 'text-danger';
-                break;
-        };
-        playAgainBtn.classList.remove('hide');
-        leaderboardBuilder(difficulty);
+        uiHandler.difficultyTextColor(difficulty, difficultyText);
+        uiHandler.showElement(playAgainBtn);
+        uiHandler.leaderboard(JSON.parse(localStorage.getItem(`leaderboard-${difficulty}`)));
     } else {
-        initialState.classList.remove('hide');
+        uiHandler.showElement(initialState);
     }
-};
-
-function playerTextBuilder(name, score) {
-    return `<b>Player:</b> ${name}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<b>Score:</b> <span id="score">${score}</span>`;
 };
 
 checkState();
@@ -226,7 +224,7 @@ form.addEventListener('submit', async (e) => {
 // The Submit button is shown if any of the options are clicked
 formElements.forEach((el) => {
     el.addEventListener('click', () => {
-        submitBtn.classList.remove('hide');
+        uiHandler.showElement(submitBtn);
     })
 });
 // we submit an answer when the Submit button is clicked
@@ -234,7 +232,7 @@ submitBtn.addEventListener('click', submitAnswer);
 // we set the new question when the Next button is clicked
 nextBtn.addEventListener('click', () => {
     sectionContainer.classList.add('slide-out-left');
-    nextBtn.classList.add('hide')
+    uiHandler.hideElement(nextBtn);
     setTimeout(() => {
         currentIndex++;
         localStorage.setItem('current-state', JSON.stringify({
@@ -248,39 +246,27 @@ nextBtn.addEventListener('click', () => {
 // we end the game and display final score and leaderboard when the End Game button is clicked
 endBtn.addEventListener('click', () => {
     currentIndex++;
-        localStorage.setItem('current-state', JSON.stringify({
-            'currentIndex': currentIndex
-        }));
-    sectionContainer.classList.replace('container', 'hide');
-    endgame.classList.replace('hide', 'flicker-in-2');
+    localStorage.setItem('current-state', JSON.stringify({
+        'currentIndex': currentIndex
+    }));
+    uiHandler.hideElement(sectionContainer, 'container');
+    uiHandler.showElement(endgame, 'flicker-in-2');
     finalScore.innerText = `Final Score: ${JSON.parse(localStorage.getItem('player')).score}`;
     difficultyText.innerText = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
-    switch (difficulty) {
-        case 'easy':
-            difficultyText.className = 'text-success';
-            break;
-        case 'medium':
-            difficultyText.className = 'text-warning';
-            break;
-        case 'hard':
-            difficultyText.className = 'text-danger';
-            break;
-    };
-    playAgainBtn.classList.remove('hide');
-    leaderboardBuilder(difficulty);
+    uiHandler.difficultyTextColor(difficulty, difficultyText);
+    uiHandler.showElement(playAgainBtn);
+    uiHandler.leaderboard(leaderboardBuilder(difficulty));
 });
 // we restart the application when the Play again? button is clicked
 playAgainBtn.addEventListener('click', () => {
-    endBtn.classList.add('hide');
+    uiHandler.hideElement(endBtn);
     endgame.classList.replace('flicker-in-2', 'flicker-out-2');
     setTimeout(() => {
-        endgame.classList.replace('flicker-out-2', 'hide');
-        initialState.classList.remove('hide');
+        uiHandler.hideElement(endgame, 'flicker-out-2');
+        uiHandler.showElement(initialState);
         clearState();
     }, 1500);
 });
-
-export { difficulty };
 
 // Things to add:
 // - set the Submit, Next and End Game button on a fixed position, regardless of the width of the form --> DONE (up to a point)
@@ -290,5 +276,5 @@ export { difficulty };
 //   this object and add another one when we get to the leaderboard, so that, if the user refreshes the page on the
 //   leaderboard, then the leaderboard will get displayed again --> DONE
 // - ADD AN INDEX SO THAT, IF THE PAGE IS REFRESHED ON THE LEADERBOARD, THEN IT RETURNS TO THE LEADERBOARD --> DONE
-// - ADD A UI HANDLER
+// - ADD A UI HANDLER --> DONE
 // - ADD A STORAGE HANDLER
