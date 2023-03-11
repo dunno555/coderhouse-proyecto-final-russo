@@ -22,8 +22,6 @@ export class UIHandler {
         return `<b>Player:</b> ${name}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<b>Score:</b> <span id="score">${score}</span>`;
     };
 
-
-    // SOLVE THE PROBLEM OF THE ID TO STYLE THAT DIFFERENTLY // MAYBE A CURRENTPLAYER FLAG ON THE PLAYER CLASS?
     leaderboard(players) {
         players.forEach((player) => {
             let playersElement = document.getElementById('players');
