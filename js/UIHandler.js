@@ -18,6 +18,14 @@ export class UIHandler {
         }
     };
 
+    addAnimation(element, className) {
+        element.classList.add(className);
+    };
+
+    removeAnimation(element, className) {
+        element.classList.remove(className);
+    };
+
     playerTextBuilder(name, score) {
         return `<b>Player:</b> ${name}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<b>Score:</b> <span id="score">${score}</span>`;
     };

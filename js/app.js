@@ -50,7 +50,7 @@ function loading() {
 
 // handles the setting of the animation when moving to the next question and then calls another function to show it
 function setQuestion(qs, index) {
-    sectionContainer.classList.contains('slide-out-left') && sectionContainer.classList.remove('slide-out-left');
+    sectionContainer.classList.contains('slide-out-left') && uiHandler.removeAnimation(sectionContainer, 'slide-out-left');
     inputBtns.forEach((el) => {
         el.checked = false;
     });
@@ -120,9 +120,9 @@ function submitAnswer() {
         player.score += 100;
         playerScore.innerText = player.score;
         localStorage.setItem('player', JSON.stringify(player));
-        playerScore.classList.add('score-blink');
+        uiHandler.addAnimation(playerScore, 'score-blink');
         setTimeout(() => {
-            playerScore.classList.remove('score-blink');
+            uiHandler.removeAnimation(playerScore, 'score-blink');
         }, 1000);
         correctAnswerLabel.innerHTML += correctIcon;
         Toastify({
@@ -185,7 +185,8 @@ function clearState() {
 
 function checkState() {
     const currentState = JSON.parse(localStorage.getItem('current-state'));
-    const player = JSON.parse(localStorage.getItem('player'));
+    const player = JSON.parse(localStorage.getItem('player')) || '';
+    difficulty = player.difficulty;
     if (currentState && currentState.currentIndex <= 4) {
         uiHandler.hideElement(initialState);
         uiHandler.showElement(sectionContainer, 'container');
@@ -193,10 +194,8 @@ function checkState() {
 
         randomizedQuestions = currentState.randomizedQuestions;
         currentIndex = currentState.currentIndex;
-        difficulty = player.difficulty;
         setQuestion(randomizedQuestions, currentIndex);
     } else if (currentState && currentState.currentIndex > 4) {
-        difficulty = player.difficulty;
         uiHandler.hideElement(sectionContainer, 'container');
         uiHandler.showElement(endgame, 'flicker-in-2');
         navBarText.innerHTML = uiHandler.playerTextBuilder(player.name, player.score);
@@ -231,7 +230,7 @@ formElements.forEach((el) => {
 submitBtn.addEventListener('click', submitAnswer);
 // we set the new question when the Next button is clicked
 nextBtn.addEventListener('click', () => {
-    sectionContainer.classList.add('slide-out-left');
+    uiHandler.addAnimation(sectionContainer, 'slide-out-left');
     uiHandler.hideElement(nextBtn);
     setTimeout(() => {
         currentIndex++;
