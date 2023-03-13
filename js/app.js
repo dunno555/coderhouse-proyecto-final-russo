@@ -80,7 +80,7 @@ function showQuestion(question) {
 // and calling on the loading and setQuestion functions so that everything can be displayed on the screen
 function startGame() {
     let playerNameValue = document.querySelector('#player').value;
-    let player = new Player(playerNameValue, difficulty, 0, true);
+    let player = new Player(playerNameValue, difficulty);
 
     document.querySelector('#player').value = '';
     navBarText.innerHTML = uiHandler.playerTextBuilder(player.name, player.score);
