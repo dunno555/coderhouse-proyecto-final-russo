@@ -12,3 +12,6 @@ La aplicación contiene:
 1. Clonar el repositorio en alguna carpeta local
 2. Abrir el repositorio con algún editor de código
 3. Levantar un server desde el archivo `index.html` (en mi caso, utilice la extensión **Live Server**)
+
+## ¿Por qué los lenguajes contabilizados por GitHub muestran que esta aplicación utiliza, en su mayoría, CSS?
+Animaciones. Animaciones everywhere (bueno, no *everywhere*, pero en un par de lugares)
