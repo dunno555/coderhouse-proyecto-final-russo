@@ -270,10 +270,3 @@ playAgainBtn.addEventListener('click', () => {
 // Things to add:
 // - set the Submit, Next and End Game button on a fixed position, regardless of the width of the form --> DONE (up to a point)
 // - general refactoring, so that the app is more logically organized
-// - add a current-state ls object, that will contain the randomized questions and the current index, so that, if the
-//   refreshes the page, then the last question that was on screen will get displayed. we will remove all keys in 
-//   this object and add another one when we get to the leaderboard, so that, if the user refreshes the page on the
-//   leaderboard, then the leaderboard will get displayed again --> DONE
-// - ADD AN INDEX SO THAT, IF THE PAGE IS REFRESHED ON THE LEADERBOARD, THEN IT RETURNS TO THE LEADERBOARD --> DONE
-// - ADD A UI HANDLER --> DONE
-// - ADD A STORAGE HANDLER
