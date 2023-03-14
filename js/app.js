@@ -5,8 +5,8 @@ import { Question } from "./question.js";
 import { correctIcon, incorrectIcon } from "./icons.js";
 // Player is the class for the Player object, which includes name and score for the player
 import { Player } from "./player.js";
-// QuestionsAPI handles the retrieving of the questions and answers from the Trivia API
-import { QuestionsAPI } from "./triviaAPI.js";
+// TriviaAPI handles the retrieving of the questions and answers from the Trivia API
+import { TriviaAPI } from "./triviaAPI.js";
 // this file handles the building of the leaderboard shown at the end of the game
 import { leaderboardBuilder } from "./leaderboard.js";
 // this file handles the UI changes (showing and hiding sections, completing player info, building the leaderboard)
@@ -32,8 +32,8 @@ const difficultyText = document.querySelector('#difficulty');
 // of the game, as well as displaying the leaderboard based on the difficulty
 let randomizedQuestions = [], currentIndex, difficulty;
 
-// Initializing the QuestionsAPI class, so that we can call on new questions every time the app is initialized
-let questions = new QuestionsAPI;
+// Initializing the TriviaAPI class, so that we can call on new questions every time the app is initialized
+let questions = new TriviaAPI;
 // Initializing the UIHandler class, so that we can call it every time we change the UI
 let uiHandler = new UIHandler;
 

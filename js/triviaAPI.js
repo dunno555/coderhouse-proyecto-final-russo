@@ -1,6 +1,6 @@
 const theTriviaAPIURL = 'https://the-trivia-api.com/api/questions?categories=film_and_tv&limit=5&difficulty=';
 
-class QuestionsAPI {
+class TriviaAPI {
     constructor(questions = []) {
         this.questions = questions;
     }
@@ -21,4 +21,4 @@ class QuestionsAPI {
     }
 }
 
-export { QuestionsAPI };
+export { TriviaAPI };
