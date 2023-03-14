@@ -15,4 +15,4 @@ La aplicación contiene:
 
 ## ¿Por qué los lenguajes contabilizados por GitHub muestran que esta aplicación utiliza, en su mayoría, CSS?
 ![Meme picture](/images/meme-everywhere.jpg "X, X Everywhere Meme")
-(bueno, no *everywhere*, pero en un par de lugares)
+*(bueno, no *everywhere*, pero en un par de lugares)*
