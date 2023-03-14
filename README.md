@@ -1,6 +1,6 @@
 # Proyecto Final - Russo
 
-## Dr. Ruby's Movie Quiz
+## Dr. Ruby's 🎥 Movie Quiz 🎥
 Si tenés ganas de desafiar tus conocimientos sobre películas, este es tu lugar! Con tres niveles de dificultad, y preguntas generadas aleatoriamente cada vez que inicias la aplicación, las posibilidades son infinitas!
 
 La aplicación contiene:
@@ -15,4 +15,5 @@ La aplicación contiene:
 
 ## ¿Por qué los lenguajes contabilizados por GitHub muestran que esta aplicación utiliza, en su mayoría, CSS?
 ![Meme picture](/images/meme-everywhere.jpg "X, X Everywhere Meme")
-*(bueno, no *everywhere*, pero en un par de lugares)*
+
+(bueno, no *everywhere*, pero en un par de lugares)
