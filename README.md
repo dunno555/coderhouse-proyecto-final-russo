@@ -14,4 +14,5 @@ La aplicación contiene:
 3. Levantar un server desde el archivo `index.html` (en mi caso, utilice la extensión **Live Server**)
 
 ## ¿Por qué los lenguajes contabilizados por GitHub muestran que esta aplicación utiliza, en su mayoría, CSS?
-Animaciones. Animaciones everywhere (bueno, no *everywhere*, pero en un par de lugares)
+![Meme picture](/images/meme-everywhere.jpg "X, X Everywhere Meme")
+(bueno, no *everywhere*, pero en un par de lugares)
