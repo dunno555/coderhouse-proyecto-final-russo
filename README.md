@@ -4,7 +4,7 @@
 Si tenés ganas de desafiar tus conocimientos sobre películas, este es tu lugar! Con tres niveles de dificultad, y preguntas generadas aleatoriamente cada vez que inicias la aplicación, las posibilidades son infinitas!
 
 La aplicación contiene:
-- Frontend en HTML y CSS, utilizando la organización y clases de Bootstrap (con algunas animaciones y notificaciones - gracias [Animista](https://animista.net/) y [Toastify](https://apvarun.github.io/toastify-js/)!)
+- Frontend en HTML y CSS, utilizando la organización y clases de [Bootstrap](https://getbootstrap.com/docs/5.3/getting-started/introduction/) (con algunas animaciones y notificaciones - gracias [Animista](https://animista.net/) y [Toastify](https://apvarun.github.io/toastify-js/)!)
 - Preguntas generadas en base a llamadas a una API ([The Trivia API](https://the-trivia-api.com/docs/)) que retorna preguntas y sus respectivas respuestas en formato multiple choice
     - Aclaración: si alguna pregunta tiene algún error gramatical o de puntuación (ejemplo: he visto algunas preguntas con doble signo de interrogación), esto se debe a que vienen de la API y son creadas por usuaries. Se podría implementar algún sistema de revisión gramatical de los textos, pero no está dentro del alcance actual de la aplicación
 - Datos del jugador, rankings y preguntas guardadas en LocalStorage para el funcionamiento apropiado de la aplicación
